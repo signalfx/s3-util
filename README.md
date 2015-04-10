@@ -26,9 +26,9 @@ var s3Util = require('s3-util');
 
 // Construct the client
 var client = s3Util(
-    bucket: 'my-s3-bucket',
-    awsAccessKeyId: 'abcdef',
-    awsSecretAccessKey: '123456'
+  'my-access-key-id', 
+  'my-secret-access-key', 
+  'my-s3-bucket'
 );
 
 // Synchronizes a local file, directory, or glob pattern with an s3 destination
