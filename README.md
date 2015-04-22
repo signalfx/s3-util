@@ -2,9 +2,7 @@
 
 > High-level utility for dealing with [S3](http://aws.amazon.com/s3/).
 
-Bower to S3 synchronizes an S3 bucket + prefix with the contents of a given
-bower package. This means that any files which are not in the bower package
-will be removed from the destination prefix.
+Enables syncronizing a local directory with a remote s3 bucket (uploading local files, deleting remote files not present locally).
 
 ## Usage via the Command Line
 ```sh
