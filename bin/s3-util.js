@@ -39,14 +39,14 @@ program.command('delete <s3Location>')
     var bucket = divider !== -1 ? s3Location.substr(0, divider) : s3Location;
     var dest = divider !== -1 ? s3Location.substr(divider + 1) : '';
 
-    var client = getClient(bucket);
-    client.deleteDirectory(dest).catch(function(e){
-      console.error(e.toString(), e.stack);
+    s3Util(bucket, {
+      awsAccessKeyId: program.keyId,
+      awsSecretAccessKey: program.accessKey
+    }).then(function(client){
+      client.deleteDirectory(dest).catch(function(e){
+        console.error(e.toString(), e.stack);
+      });
     });
   });
 
 program.parse(process.argv);
-
-function getClient(bucket){
-  return s3Util(program.keyId, program.accessKey, bucket);
-}

@@ -24,12 +24,24 @@ $ npm install --save s3-util
 
 var s3Util = require('s3-util');
 
-// Construct the client
-var client = s3Util(
-  'my-access-key-id', 
-  'my-secret-access-key', 
-  'my-s3-bucket'
-);
+// Construct the client using keys
+s3Util('my-s3-bucket', {
+  awsAccessKeyId: 'abcdef',
+  awsSecretAccessKey: '123456'
+}).then(function(client){
+  // operations on client
+}).catch(function(err){
+  // caught async errors
+});
+
+// Construct the client using EC2 IAM Role
+s3Util('my-s3-bucket', {
+  awsIAMRole: 'my-role'
+}).then(function(client){
+  // operations on client
+}).catch(function(err){
+  // caught async errors
+});
 
 // Synchronizes a local file, directory, or glob pattern with an s3 destination
 // if a directory is passed in, all files in the S3 destination which are not

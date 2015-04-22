@@ -1,15 +1,13 @@
 var knox = require('knox');
+var request = require('request');
+var q = require('q');
 var its = require('its');
 
-module.exports = function createApi(awsAccessKeyId, awsSecretAccessKey, bucketName){
-  its.string(awsAccessKeyId);
-  its.string(awsSecretAccessKey);
-  its.string(bucketName);
-
+function createAPI(bucket, key, secret){
   var client = knox.createClient({
-    key: awsAccessKeyId,
-    secret: awsSecretAccessKey,
-    bucket: bucketName
+    key: key,
+    secret: secret,
+    bucket: bucket
   });
 
   var api = {};
@@ -28,4 +26,32 @@ module.exports = function createApi(awsAccessKeyId, awsSecretAccessKey, bucketNa
   api.updateAcl = require('./lib/updateAcl').bind(null, client);
 
   return api;
+}
+
+module.exports = function createApi(bucket, options){
+  its.string(bucket);
+
+  var deferred = q.defer();
+
+  if(options.awsIAMRole) {
+    var credUrl = 'http://169.254.169.254/latest/meta-data/iam/security-credentials/' + options.awsIAMRole;
+    request(credUrl, function(error, response, body){
+      if(error || response.statusCode !== 200){
+        return deferred.reject(error || response);
+      }
+
+      var creds = JSON.parse(body);
+      var api = createAPI(bucket, creds.AccessKeyId, creds.SecretAccessKey);
+
+      deferred.resolve(api);
+    });
+  } else {
+    its.string(options.awsAccessKeyId);
+    its.string(options.awsSecretAccessKey);
+
+    var api = createAPI(bucket, options.awsAccessKeyId, options.awsSecretAccessKey);
+    deferred.resolve(api);
+  }
+
+  return deferred.promise;
 };
