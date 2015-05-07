@@ -3,12 +3,8 @@ var request = require('request');
 var q = require('q');
 var its = require('its');
 
-function createAPI(bucket, key, secret){
-  var client = knox.createClient({
-    key: key,
-    secret: secret,
-    bucket: bucket
-  });
+function createAPI(options){
+  var client = knox.createClient(options);
 
   var api = {};
 
@@ -41,7 +37,16 @@ module.exports = function createApi(bucket, options){
       }
 
       var creds = JSON.parse(body);
-      var api = createAPI(bucket, creds.AccessKeyId, creds.SecretAccessKey);
+      var accessKeyId = creds.AccessKeyId;
+      var secretAccessKey = creds.SecretAccessKey;
+      var token = creds.Token;
+
+      var api = createAPI({
+        key: accessKeyId,
+        secret: secretAccessKey,
+        bucket: bucket,
+        sessionToken: token
+      });
 
       deferred.resolve(api);
     });
