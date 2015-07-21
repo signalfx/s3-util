@@ -54,7 +54,12 @@ module.exports = function createApi(bucket, options){
     its.string(options.awsAccessKeyId);
     its.string(options.awsSecretAccessKey);
 
-    var api = createAPI(bucket, options.awsAccessKeyId, options.awsSecretAccessKey);
+    var api = createAPI({
+      bucket: bucket,
+      key: options.awsAccessKeyId,
+      secret: options.awsSecretAccessKey
+    });
+
     deferred.resolve(api);
   }
 
