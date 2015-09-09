@@ -18,17 +18,21 @@ program.command('sync <s3Location> <source...>')
     var bucket = divider !== -1 ? s3Location.substr(0, divider) : s3Location;
     var dest = divider !== -1 ? s3Location.substr(divider + 1) : '';
 
-    var client = getClient(bucket);
     if(src.length === 1) src = src[0];
 
-    client.sync(src, dest, {
-      base: program.globBase,
-      headers: {
-        'x-amz-acl': options.acl,
-        'Cache-Control': options.cache
-      }
-    }).catch(function(e){
-      console.error(e.toString(), e.stack);
+    s3Util(bucket, {
+      awsAccessKeyId: program.keyId,
+      awsSecretAccessKey: program.accessKey
+    }).then(function(client){
+      client.sync(src, dest, {
+        base: program.globBase,
+        headers: {
+          'x-amz-acl': options.acl,
+          'Cache-Control': options.cache
+        }
+      }).catch(function(e){
+        console.error(e.toString(), e.stack);
+      });
     });
   });
 

@@ -1,6 +1,6 @@
 {
   "name": "s3-util",
-  "version": "2.0.15",
+  "version": "2.0.19",
   "description": "High level S3 operations",
   "keywords": [
     "s3",
